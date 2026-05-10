@@ -1,0 +1,245 @@
+syntax = "proto3";
+
+package com.githubx.grpc;
+
+option java_package = "com.githubx.grpc.proto";
+option java_outer_classname = "IssueServiceProto";
+option java_multiple_files = true;
+
+// ─────────────────────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────────────────────
+
+enum IssueState {
+  ISSUE_STATE_UNSPECIFIED = 0;
+  ISSUE_STATE_OPEN        = 1;
+  ISSUE_STATE_CLOSED      = 2;
+}
+
+// ─────────────────────────────────────────────────────────────
+// COMMON MESSAGES
+// ─────────────────────────────────────────────────────────────
+
+message PaginationMeta {
+  int32 page        = 1;
+  int32 per_page    = 2;
+  int32 total       = 3;
+  int32 total_pages = 4;
+}
+
+message PaginationRequest {
+  int32 page     = 1;
+  int32 per_page = 2;
+}
+
+// ─────────────────────────────────────────────────────────────
+// ISSUE MESSAGES
+// ─────────────────────────────────────────────────────────────
+
+message AuthorSummary {
+  string id       = 1;
+  string username = 2;
+}
+
+message LabelDTO {
+  string id          = 1;
+  string repo_id     = 2;
+  string name        = 3;
+  string color       = 4;
+  string description = 5;
+}
+
+message IssueDTO {
+  string        id             = 1;
+  string        repo_id        = 2;
+  int32         number         = 3;
+  string        title          = 4;
+  string        body           = 5;
+  IssueState    state          = 6;
+  AuthorSummary author         = 7;
+  AuthorSummary assignee       = 8;
+  repeated LabelDTO labels     = 9;
+  int32         comments_count = 10;
+  string        created_at     = 11;
+  string        updated_at     = 12;
+  string        closed_at      = 13;
+}
+
+message CommentDTO {
+  string        id         = 1;
+  string        issue_id   = 2;
+  string        body       = 3;
+  AuthorSummary author     = 4;
+  string        created_at = 5;
+  string        updated_at = 6;
+}
+
+// ─── List Issues ──────────────────────────────────────────────
+
+message ListIssuesRequest {
+  string            repo_id    = 1;
+  string            owner      = 2;
+  string            repo       = 3;
+  IssueState        state      = 4;
+  string            label      = 5;
+  string            assignee   = 6;
+  PaginationRequest pagination = 7;
+}
+
+message ListIssuesResponse {
+  repeated IssueDTO issues     = 1;
+  PaginationMeta    pagination = 2;
+}
+
+// ─── Get Issue ────────────────────────────────────────────────
+
+message GetIssueRequest {
+  string owner        = 1;
+  string repo         = 2;
+  int32  issue_number = 3;
+}
+
+message GetIssueResponse {
+  IssueDTO issue = 1;
+}
+
+// ─── Create Issue ─────────────────────────────────────────────
+
+message CreateIssueRequest {
+  string          owner    = 1;
+  string          repo     = 2;
+  string          title    = 3;
+  string          body     = 4;
+  repeated string labels   = 5;
+  string          assignee = 6;
+}
+
+message CreateIssueResponse {
+  IssueDTO issue = 1;
+}
+
+// ─── Update Issue ─────────────────────────────────────────────
+
+message UpdateIssueRequest {
+  string          owner        = 1;
+  string          repo         = 2;
+  int32           issue_number = 3;
+  string          title        = 4;
+  string          body         = 5;
+  IssueState      state        = 6;
+  string          assignee     = 7;
+  repeated string labels       = 8;
+}
+
+message UpdateIssueResponse {
+  IssueDTO issue = 1;
+}
+
+// ─────────────────────────────────────────────────────────────
+// COMMENT MESSAGES
+// ─────────────────────────────────────────────────────────────
+
+message ListIssueCommentsRequest {
+  string owner        = 1;
+  string repo         = 2;
+  int32  issue_number = 3;
+}
+
+message ListIssueCommentsResponse {
+  repeated CommentDTO comments = 1;
+}
+
+message GetIssueCommentRequest {
+  string owner      = 1;
+  string repo       = 2;
+  string comment_id = 3;
+}
+
+message GetIssueCommentResponse {
+  CommentDTO comment = 1;
+}
+
+message CreateIssueCommentRequest {
+  string owner        = 1;
+  string repo         = 2;
+  int32  issue_number = 3;
+  string body         = 4;
+}
+
+message CreateIssueCommentResponse {
+  CommentDTO comment = 1;
+}
+
+message UpdateIssueCommentRequest {
+  string owner      = 1;
+  string repo       = 2;
+  string comment_id = 3;
+  string body       = 4;
+}
+
+message UpdateIssueCommentResponse {
+  CommentDTO comment = 1;
+}
+
+message DeleteIssueCommentRequest {
+  string owner      = 1;
+  string repo       = 2;
+  string comment_id = 3;
+}
+
+message DeleteIssueCommentResponse {
+  bool success = 1;
+}
+
+// ─────────────────────────────────────────────────────────────
+// LABEL MESSAGES
+// ─────────────────────────────────────────────────────────────
+
+message ListLabelsRequest {
+  string owner = 1;
+  string repo  = 2;
+}
+
+message ListLabelsResponse {
+  repeated LabelDTO labels = 1;
+}
+
+message CreateLabelRequest {
+  string owner       = 1;
+  string repo        = 2;
+  string name        = 3;
+  string color       = 4;
+  string description = 5;
+}
+
+message CreateLabelResponse {
+  LabelDTO label = 1;
+}
+
+// ─────────────────────────────────────────────────────────────
+// SERVICES
+// ─────────────────────────────────────────────────────────────
+
+// IssuePublicService — lectura pública, sin autenticación
+service IssuePublicService {
+  rpc GetIssue(GetIssueRequest)                   returns (GetIssueResponse);
+  rpc ListIssues(ListIssuesRequest)               returns (ListIssuesResponse);
+  rpc ListIssueComments(ListIssueCommentsRequest) returns (ListIssueCommentsResponse);
+  rpc ListLabels(ListLabelsRequest)               returns (ListLabelsResponse);
+}
+
+// IssueService — operaciones protegidas, requiere JWT en metadata
+service IssueService {
+  // Issues
+  rpc CreateIssue(CreateIssueRequest) returns (CreateIssueResponse);
+  rpc UpdateIssue(UpdateIssueRequest) returns (UpdateIssueResponse);
+
+  // Comentarios
+  rpc GetIssueComment(GetIssueCommentRequest)       returns (GetIssueCommentResponse);
+  rpc CreateIssueComment(CreateIssueCommentRequest) returns (CreateIssueCommentResponse);
+  rpc UpdateIssueComment(UpdateIssueCommentRequest) returns (UpdateIssueCommentResponse);
+  rpc DeleteIssueComment(DeleteIssueCommentRequest) returns (DeleteIssueCommentResponse);
+
+  // Labels
+  rpc CreateLabel(CreateLabelRequest) returns (CreateLabelResponse);
+}

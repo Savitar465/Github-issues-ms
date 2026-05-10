@@ -1,0 +1,175 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "IssueApi",
+    "version": "1.0.0",
+    "description": "Microservicio de issues, labels y comentarios para Mini-GitHub"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+
+      "IssueState": {
+        "type": "string",
+        "enum": ["OPEN", "CLOSED"]
+      },
+
+      "PaginationMeta": {
+        "type": "object",
+        "required": ["page", "perPage", "total", "totalPages"],
+        "properties": {
+          "page":       { "type": "integer", "format": "int32" },
+          "perPage":    { "type": "integer", "format": "int32" },
+          "total":      { "type": "integer", "format": "int32" },
+          "totalPages": { "type": "integer", "format": "int32" }
+        }
+      },
+
+      "AuthorSummary": {
+        "type": "object",
+        "required": ["id", "username"],
+        "properties": {
+          "id":       { "type": "string" },
+          "username": { "type": "string" }
+        }
+      },
+
+      "LabelDTO": {
+        "type": "object",
+        "required": ["id", "repoId", "name", "color"],
+        "properties": {
+          "id":          { "type": "string" },
+          "repoId":      { "type": "string" },
+          "name":        { "type": "string", "minLength": 1, "maxLength": 50 },
+          "color":       { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+          "description": { "type": "string" }
+        }
+      },
+
+      "IssueDTO": {
+        "type": "object",
+        "required": ["id", "repoId", "number", "title", "state", "author", "labels", "commentsCount", "createdAt", "updatedAt"],
+        "properties": {
+          "id":            { "type": "string" },
+          "repoId":        { "type": "string" },
+          "number":        { "type": "integer", "format": "int32" },
+          "title":         { "type": "string", "minLength": 1, "maxLength": 255 },
+          "body":          { "type": "string" },
+          "state":         { "$ref": "#/components/schemas/IssueState" },
+          "author":        { "$ref": "#/components/schemas/AuthorSummary" },
+          "assignee":      { "$ref": "#/components/schemas/AuthorSummary" },
+          "labels": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LabelDTO" }
+          },
+          "commentsCount": { "type": "integer", "format": "int32" },
+          "createdAt":     { "type": "string" },
+          "updatedAt":     { "type": "string" },
+          "closedAt":      { "type": "string" }
+        }
+      },
+
+      "CommentDTO": {
+        "type": "object",
+        "required": ["id", "issueId", "body", "author", "createdAt", "updatedAt"],
+        "properties": {
+          "id":        { "type": "string" },
+          "issueId":   { "type": "string" },
+          "body":      { "type": "string", "minLength": 1 },
+          "author":    { "$ref": "#/components/schemas/AuthorSummary" },
+          "createdAt": { "type": "string" },
+          "updatedAt": { "type": "string" }
+        }
+      },
+
+      "ListIssuesBody": {
+        "type": "object",
+        "required": ["issues", "pagination"],
+        "properties": {
+          "issues": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/IssueDTO" }
+          },
+          "pagination": { "$ref": "#/components/schemas/PaginationMeta" }
+        }
+      },
+
+      "CreateIssueBody": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title":    { "type": "string", "minLength": 1, "maxLength": 255 },
+          "body":     { "type": "string" },
+          "labels": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "assignee": { "type": "string" }
+        }
+      },
+
+      "UpdateIssueBody": {
+        "type": "object",
+        "properties": {
+          "title":    { "type": "string", "minLength": 1, "maxLength": 255 },
+          "body":     { "type": "string" },
+          "state":    { "$ref": "#/components/schemas/IssueState" },
+          "assignee": { "type": "string" },
+          "labels": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+
+      "ListIssueCommentsBody": {
+        "type": "object",
+        "required": ["comments"],
+        "properties": {
+          "comments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CommentDTO" }
+          }
+        }
+      },
+
+      "CreateIssueCommentBody": {
+        "type": "object",
+        "required": ["body"],
+        "properties": {
+          "body": { "type": "string", "minLength": 1 }
+        }
+      },
+
+      "UpdateIssueCommentBody": {
+        "type": "object",
+        "required": ["body"],
+        "properties": {
+          "body": { "type": "string", "minLength": 1 }
+        }
+      },
+
+      "ListLabelsBody": {
+        "type": "object",
+        "required": ["labels"],
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LabelDTO" }
+          }
+        }
+      },
+
+      "CreateLabelBody": {
+        "type": "object",
+        "required": ["name", "color"],
+        "properties": {
+          "name":        { "type": "string", "minLength": 1, "maxLength": 50 },
+          "color":       { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+          "description": { "type": "string", "maxLength": 255 }
+        }
+      }
+
+    }
+  }
+}

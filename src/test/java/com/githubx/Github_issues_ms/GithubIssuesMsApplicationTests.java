@@ -2,7 +2,7 @@ package com.githubx.Github_issues_ms;
 
 import com.githubx.Github_issues_ms.dao.IssueCommentDao;
 import com.githubx.Github_issues_ms.dao.IssueDao;
-import com.githubx.Github_issues_ms.dao.IssueTagDao;
+import com.githubx.Github_issues_ms.dao.LabelDao;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +23,7 @@ class GithubIssuesMsApplicationTests {
 
 	@MockBean private IssueDao issueDao;
 	@MockBean private IssueCommentDao issueCommentDao;
-	@MockBean private IssueTagDao issueTagDao;
+	@MockBean private LabelDao labelDao;
 
 	@Test
 	void contextLoads() {

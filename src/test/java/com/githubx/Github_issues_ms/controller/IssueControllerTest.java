@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -29,6 +30,7 @@ class IssueControllerTest {
     private IssueService issueService;
 
     @Test
+    @WithMockUser
     void debeListarIssues() throws Exception {
         // Arrange
         ListIssuesBody response = new ListIssuesBody()
@@ -48,6 +50,7 @@ class IssueControllerTest {
     }
 
     @Test
+    @WithMockUser
     void debeCrearIssue() throws Exception {
         // Arrange
         IssueDTO issueDTO = new IssueDTO();
@@ -72,7 +75,8 @@ class IssueControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value("Bug encontrado"));
     }
-
+@WithMockUser
+    
     @Test
     void debeRetornar404CuandoIssueNoExiste() throws Exception {
         // Arrange

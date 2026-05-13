@@ -1,6 +1,4 @@
 spring:
-  config:
-    import: optional:file:./.env.properties
   profiles:
     active: dev
   application:
@@ -35,12 +33,12 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${JWT_ISSUER_URI:http://localhost:8080/realms/githubx}
-          jwk-set-uri: ${JWT_JWK_SET_URI:http://localhost:8080/realms/githubx/protocol/openid-connect/certs}
+          issuer-uri: ${JWT_ISSUER_URI:http://Github-Keycl-A5slveB416N3-565620607.us-east-1.elb.amazonaws.com/realms/Github}
+          jwk-set-uri: ${JWT_JWK_SET_URI:http://Github-Keycl-A5slveB416N3-565620607.us-east-1.elb.amazonaws.com/realms/Github/protocol/openid-connect/certs}
 
 # ===== SERVIDOR =====
 server:
-  port: ${SERVER_PORT:8084}
+  port: ${SERVER_PORT:8091}
   servlet:
     context-path: /
 
